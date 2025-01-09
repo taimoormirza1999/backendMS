@@ -208,5 +208,20 @@ router.post('/increment-view/:fileId', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+router.post('/update-tags/:fileId', async (req, res) => {
+  const fileId = req.params.fileId;
+  const { tags } = req.body;
 
+  try {
+    const fileDoc = await databases.getDocument(databaseId, filesCollectionId, fileId);
+    if (!fileDoc) {
+      return res.status(404).json({ message: 'File not found' });
+    }let updtedTags=tags[1];
+    await databases.updateDocument(databaseId, filesCollectionId, fileId, { tags:updtedTags });
+    res.status(200).json({ message: 'Tags updated successfully',updtedTags });
+  } catch (error) {
+    console.error('Error updating tags:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
   module.exports = router;
