@@ -119,8 +119,6 @@ router.post('/login', async (req, res) => {
         message: 'No file uploaded',
       });
     }
-
-    
         // Configuration
         cloudinary.config({ 
             cloud_name: 'dl3zfxoyd', 
@@ -195,34 +193,20 @@ router.get('/files', async (req, res) => {
 });
 router.post('/increment-view/:fileId', async (req, res) => {
   const fileId = req.params.fileId;
+  console.log('File ID received:', fileId); 
 
   try {
-    // Fetch the file document from Appwrite using fileId
     const fileDoc = await databases.getDocument(databaseId, filesCollectionId, fileId);
-
     if (!fileDoc) {
       return res.status(404).json({ message: 'File not found' });
     }
-
-    // Increment the views count
     const updatedViews = fileDoc.views + 1;
-
-    // Update the file's view count in the database
-    await databases.updateDocument(databaseId, filesCollectionId, fileId, {
-      views: updatedViews,
-    });
-
-    // Send a success response
-    res.status(200).json({
-      message: 'File views incremented successfully',
-      views: updatedViews,
-    });
+    await databases.updateDocument(databaseId, filesCollectionId, fileId, { views: updatedViews });
+    res.status(200).json({ message: 'File views incremented successfully', views: updatedViews });
   } catch (error) {
     console.error('Error updating file views:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
-
-
 
   module.exports = router;
